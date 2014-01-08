@@ -1,11 +1,11 @@
 package thing;
 
-import thing.components.PhysicsComp;
+import java.util.ArrayList;
+
 import thing.components.ModelComp;
-import thing.components.PositionComp;
-import thing.components.SpriteComp;
-import thing.systems.PhysicsSys;
+import thing.components.PhysicsComp;
 import thing.systems.ModelRenderSys;
+import thing.systems.PhysicsSys;
 import thing.systems.SpriteRenderSys;
 
 import com.artemis.Component;
@@ -14,28 +14,32 @@ import com.artemis.World;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Transform;
 import com.badlogic.gdx.physics.bullet.collision.btBox2dShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.collision.btMaterial;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 
-public class GameXYZ implements Screen {
+public class ShaderTest implements Screen {
+	Environment lights;
 
 	OrthographicCamera spriteCamera;
 	PerspectiveCamera modelCamera;
@@ -51,15 +55,27 @@ public class GameXYZ implements Screen {
 	@SuppressWarnings("unused")
 	private int frames = 0;
 
-	public GameXYZ(Game game) {
+	// For keeping track of what needs to be disposed
+	ArrayList<Model> models;
+
+	public ShaderTest(Game game) {
 		world = new World();
 
 		cameraSetup();
 		systemsSetup();
+		lightingSetup();
 
 		world.initialize();
 
 		entitySetup();
+		shaderSetup();
+	}
+
+	private void lightingSetup() {
+		lights = new Environment();
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.1f, 0.1f, 0.1f, 0.5f));
+		lights.add(new DirectionalLight().set(Color.WHITE, new Vector3(-1, -1, 0)));
+		modelRenderSys.setEnviroment(lights);
 	}
 
 	private void cameraSetup() {
@@ -82,11 +98,16 @@ public class GameXYZ implements Screen {
 	private void entitySetup() {
 		// Start adding Models...
 		ModelBuilder mb = new ModelBuilder();
+		models = new ArrayList<Model>();
 
 		// Falling box
 		Entity e = world.createEntity();
 
-		Model m = mb.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+		// Model m = mb.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+		ModelLoader loader = new ObjLoader();
+		Model m = loader.loadModel(Gdx.files.internal("resources/models/shuttle.obj"));
+		models.add(m);
+
 		e.addComponent(new ModelComp(m));
 		e.addComponent(this.makeBox());
 
@@ -103,10 +124,18 @@ public class GameXYZ implements Screen {
 				new Material(ColorAttribute.createDiffuse(Color.GREEN)),// material,
 				Usage.Position | Usage.Normal // attributes
 		);
+		models.add(m);
 		e.addComponent(new ModelComp(m));
 		e.addComponent(this.makeLand());
 
 		e.addToWorld();
+	}
+
+	private void shaderSetup() {
+		ShaderProgram shader = new ShaderProgram(Gdx.files.internal("resources/shaders/default.vertex.shader"),
+				Gdx.files.internal("resources/shaders/default.fragment.shader"));
+
+		shader.isCompiled();
 	}
 
 	@Override
@@ -131,15 +160,15 @@ public class GameXYZ implements Screen {
 		// }else{
 		spriteRenderSys.process();
 		// }
-
-		// posSys.process();
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		bulletPhysicsSys.dispose();
-
+		modelRenderSys.dispose();
+		for (Model m : models) {
+			m.dispose();
+		}
 	}
 
 	@Override
@@ -213,7 +242,7 @@ public class GameXYZ implements Screen {
 		btCollisionShape collisionShape = new btBox2dShape(new Vector3(10, 1, 10));
 
 		btRigidBody rigidBody = new btRigidBody(mass, motionState, collisionShape);
-		rigidBody.setWorldTransform(new Matrix4(new Vector3(10, -10, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)));
+		rigidBody.setWorldTransform(new Matrix4(new Vector3(0, -10, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)));
 
 		collisionShape.calculateLocalInertia(mass, inertia);
 		rigidBody.setMassProps(mass, inertia);

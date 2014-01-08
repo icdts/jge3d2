@@ -10,7 +10,9 @@ import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.Shader;
 
 public class ModelRenderSys extends EntitySystem {
 	@Mapper
@@ -20,6 +22,8 @@ public class ModelRenderSys extends EntitySystem {
 
 	private PerspectiveCamera camera;
 	private ModelBatch batch;
+
+	private Environment environment;
 
 	@SuppressWarnings("unchecked")
 	public ModelRenderSys(PerspectiveCamera camera) {
@@ -54,13 +58,38 @@ public class ModelRenderSys extends EntitySystem {
 			ModelComp model = modelMap.get(e);
 			PhysicsComp physics = physicsMap.get(e);
 			model.modelInst.transform.set(physics.collisionObject.getWorldTransform());
-			batch.render(model.modelInst);
+
+			if(model.shader != null){
+				loadShaderData(model);
+			}
+			
+			if (environment != null && model.shader != null) {
+				batch.render(model.modelInst, environment, model.shader);
+			} else if (environment != null && model.shader == null) {
+				batch.render(model.modelInst, environment);
+			} else if (environment == null && model.shader != null) {
+				batch.render(model.modelInst, model.shader);
+			} else {
+				batch.render(model.modelInst);
+			}
 		}
 	}
 
 	@Override
 	protected void end() {
 		batch.end();
+	}
+
+	public void dispose() {
+		batch.dispose();
+	}
+
+	public void setEnviroment(Environment environment) {
+		this.environment = environment;
+	}
+
+	public void setShader(Shader shader) {
+		this.shader = shader;
 	}
 
 }
