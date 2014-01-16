@@ -37,6 +37,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 
 public class GameXYZ implements Screen {
 
+
 	OrthographicCamera spriteCamera;
 	PerspectiveCamera modelCamera;
 	private World world;
@@ -47,22 +48,11 @@ public class GameXYZ implements Screen {
 
 	private float delta = 0;
 	private float previousTimeStamp = 0;
-
+	
 	@SuppressWarnings("unused")
 	private int frames = 0;
-
+	
 	public GameXYZ(Game game) {
-		world = new World();
-
-		cameraSetup();
-		systemsSetup();
-
-		world.initialize();
-
-		entitySetup();
-	}
-
-	private void cameraSetup() {
 		modelCamera = new PerspectiveCamera(45, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		modelCamera.position.set(10f, 10f, 10f);
 		modelCamera.lookAt(0, 0, 0);
@@ -71,42 +61,47 @@ public class GameXYZ implements Screen {
 
 		spriteCamera = new OrthographicCamera();
 		spriteCamera.setToOrtho(false, 1280, 900);
-	}
 
-	private void systemsSetup() {
-		spriteRenderSys = world.setSystem(new SpriteRenderSys(spriteCamera), true);
+		world = new World();
+		
+		spriteRenderSys = world.setSystem(new SpriteRenderSys(spriteCamera),true);
 		modelRenderSys = world.setSystem(new ModelRenderSys(modelCamera), true);
 		bulletPhysicsSys = world.setSystem(new PhysicsSys(world));
-	}
-
-	private void entitySetup() {
-		// Start adding Models...
+		world.initialize();
+		
+		
+		//Start adding Models...
 		ModelBuilder mb = new ModelBuilder();
-
-		// Falling box
+		
+		
+		//Falling box
 		Entity e = world.createEntity();
-
-		Model m = mb.createBox(5f, 5f, 5f, new Material(ColorAttribute.createDiffuse(Color.RED)), Usage.Position | Usage.Normal);
+		
+		Model m = mb.createBox(5f, 5f, 5f,
+				new Material(ColorAttribute.createDiffuse(Color.RED)),
+				Usage.Position | Usage.Normal);
 		e.addComponent(new ModelComp(m));
 		e.addComponent(this.makeBox());
-
+		
 		e.addToWorld();
-
-		// Land
+		
+		//Land
 		e = world.createEntity();
-
-		m = mb.createRect(-10f, 0f, -10f,// x00, y00, z00,
-				-10f, 0f, 10f,// x10, y10, z10,
-				10f, 0f, 10f,// x11, y11, z11,
-				10f, 0f, -10f,// x01, y01, z01,
-				0f, 1f, 0f,// normalX, normalY, normalZ,
-				new Material(ColorAttribute.createDiffuse(Color.GREEN)),// material,
-				Usage.Position | Usage.Normal // attributes
+		
+		m = mb.createRect(
+				-10f,0f,-10f,//x00, y00, z00, 
+				-10f,0f,10f,//x10, y10, z10, 
+				10f,0f,10f,//x11, y11, z11, 
+				10f,0f,-10f,//x01, y01, z01, 
+				0f,1f,0f,//normalX, normalY, normalZ, 
+				new Material(ColorAttribute.createDiffuse(Color.GREEN)),//material, 
+				Usage.Position | Usage.Normal //attributes
 		);
 		e.addComponent(new ModelComp(m));
 		e.addComponent(this.makeLand());
-
+		
 		e.addToWorld();
+		
 	}
 
 	@Override
@@ -114,6 +109,7 @@ public class GameXYZ implements Screen {
 		world.setDelta(getDelta());
 		bulletPhysicsSys.process();
 
+		
 		modelCamera.update();
 		// if(use3D){
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -131,8 +127,9 @@ public class GameXYZ implements Screen {
 		// }else{
 		spriteRenderSys.process();
 		// }
-
-		// posSys.process();
+		
+		
+		//posSys.process();
 	}
 
 	@Override
@@ -171,59 +168,61 @@ public class GameXYZ implements Screen {
 		// TODO Auto-generated method stub
 
 	}
-
-	public float getDelta() {
-		if (previousTimeStamp != 0) {
+	
+	
+	public float getDelta(){
+		if(previousTimeStamp != 0){
 			delta = (System.nanoTime() - previousTimeStamp);
 		}
-
+		
 		previousTimeStamp = System.nanoTime();
 		frames++;
-
+		
 		return delta;
 	}
-
-	public PhysicsComp makeBox() {
+	
+	public PhysicsComp makeBox(){
 		float mass = 1f;
-		Vector3 inertia = new Vector3(0, 0, 0);
-
+		Vector3 inertia = new Vector3(0,0,0);
+		
 		btMotionState motionState = new btDefaultMotionState();
 		btCollisionShape collisionShape = new btSphereShape(1f);
-
+		
 		btRigidBody rigidBody = new btRigidBody(mass, motionState, collisionShape);
-		rigidBody.setWorldTransform(new Matrix4(new Vector3(0, 10, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)));
-
+		rigidBody.setWorldTransform(new Matrix4(new Vector3(0,10,0),new Quaternion(0,0,0,1),new Vector3(1,1,1)));
+		
 		collisionShape.calculateLocalInertia(mass, inertia);
 		rigidBody.setMassProps(mass, inertia);
-
-		PhysicsComp b = new PhysicsComp(rigidBody);
-
+		
+		PhysicsComp b = new PhysicsComp(rigidBody); 
+		
 		bulletPhysicsSys.dynamicsWorld.addRigidBody(rigidBody);
-
+		
 		rigidBody.updateInertiaTensor();
-
+		
 		return b;
 	}
+	
 
 	private Component makeLand() {
 		float mass = 0f;
-		Vector3 inertia = new Vector3(0, 0, 0);
-
+		Vector3 inertia = new Vector3(0,0,0);
+		
 		btMotionState motionState = new btDefaultMotionState();
-		btCollisionShape collisionShape = new btBox2dShape(new Vector3(10, 1, 10));
-
+		btCollisionShape collisionShape = new btBox2dShape(new Vector3(10,1,10));
+		
 		btRigidBody rigidBody = new btRigidBody(mass, motionState, collisionShape);
-		rigidBody.setWorldTransform(new Matrix4(new Vector3(10, -10, 0), new Quaternion(0, 0, 0, 1), new Vector3(1, 1, 1)));
-
+		rigidBody.setWorldTransform(new Matrix4(new Vector3(10,-10,0),new Quaternion(0,0,0,1),new Vector3(1,1,1)));
+		
 		collisionShape.calculateLocalInertia(mass, inertia);
 		rigidBody.setMassProps(mass, inertia);
-
-		PhysicsComp b = new PhysicsComp(rigidBody);
-
+		
+		PhysicsComp b = new PhysicsComp(rigidBody); 
+		
 		bulletPhysicsSys.dynamicsWorld.addRigidBody(rigidBody);
-
+		
 		rigidBody.updateInertiaTensor();
-
+		
 		return b;
 	}
 }

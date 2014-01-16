@@ -19,51 +19,51 @@ import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 
-public class PhysicsSys extends EntitySystem {
+public class PhysicsSys extends EntitySystem{
 	World world;
-
+	
 	@Mapper
 	ComponentMapper<PhysicsComp> bulletPhysicsMapper;
-
+	
 	btBroadphaseInterface broadphaseInterface;
 	btCollisionConfiguration collisionConfiguration;
 	btCollisionDispatcher collisionDispatcher;
 	btSequentialImpulseConstraintSolver solver;
 	public btDiscreteDynamicsWorld dynamicsWorld;
-
+	
 	private Vector3 worldAabbMin;
 	private Vector3 worldAabbMax;
-
+	
 	@SuppressWarnings("unchecked")
 	public PhysicsSys(World world) {
 		super(Aspect.getAspectForAll(PhysicsComp.class));
 		this.world = world;
 	}
-
+	
 	@Override
-	public void initialize() {
+	public void initialize(){
 		Bullet.init();
-
+		
 		// Min and Max collision boundaries for world (TODO: needs changing?)
 		worldAabbMin = new Vector3(-1000, -1000, -1000);
 		worldAabbMax = new Vector3(1000, 1000, 1000);
-
+		
 		// algorithm for finding collision proximity (there are better ones)
 		broadphaseInterface = new btAxisSweep3(worldAabbMin, worldAabbMax);
-
+		
 		collisionConfiguration = new btDefaultCollisionConfiguration();
 		collisionDispatcher = new btCollisionDispatcher(collisionConfiguration);
-
+		
 		solver = new btSequentialImpulseConstraintSolver();
-
-		dynamicsWorld = new btDiscreteDynamicsWorld(collisionDispatcher, broadphaseInterface, solver, collisionConfiguration);
-
-		dynamicsWorld.setGravity(new Vector3(0, -10, 0));
+		
+		dynamicsWorld = new btDiscreteDynamicsWorld(collisionDispatcher,broadphaseInterface, solver,collisionConfiguration);
+		
+		dynamicsWorld.setGravity(new Vector3(0,-10,0));
 	}
-
+	
 	@Override
-	protected void begin() {
-		dynamicsWorld.stepSimulation(world.getDelta() / 1000000000f, 10, 1 / 60f);
+	protected void begin(){
+		dynamicsWorld.stepSimulation(world.getDelta() / 1000000000f, 10, 1/60f);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class PhysicsSys extends EntitySystem {
 		return true;
 	}
 
-	public void dispose() {
+	public void dispose(){
 		broadphaseInterface.dispose();
 		collisionConfiguration.dispose();
 		collisionDispatcher.dispose();
@@ -81,6 +81,6 @@ public class PhysicsSys extends EntitySystem {
 
 	@Override
 	protected void processEntities(ImmutableBag<Entity> entities) {
-		// Nothing to do...
+		//Nothing to do...
 	}
 }

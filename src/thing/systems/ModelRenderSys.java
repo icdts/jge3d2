@@ -2,6 +2,7 @@ package thing.systems;
 
 import thing.components.ModelComp;
 import thing.components.PhysicsComp;
+import thing.shaders.DefaultShader;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -10,9 +11,7 @@ import com.artemis.EntitySystem;
 import com.artemis.annotations.Mapper;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.Shader;
 
 public class ModelRenderSys extends EntitySystem {
 	@Mapper
@@ -23,8 +22,14 @@ public class ModelRenderSys extends EntitySystem {
 	private PerspectiveCamera camera;
 	private ModelBatch batch;
 
+<<<<<<< HEAD
 	private Environment environment;
+	
+	private Shader defaultShader;
+	private Shader customShader;
 
+=======
+>>>>>>> parent of 2bae7d9... ShaderTest added
 	@SuppressWarnings("unchecked")
 	public ModelRenderSys(PerspectiveCamera camera) {
 		super(Aspect.getAspectForAll(PhysicsComp.class, ModelComp.class));
@@ -34,6 +39,7 @@ public class ModelRenderSys extends EntitySystem {
 	@Override
 	protected void initialize() {
 		batch = new ModelBatch();
+		if( defaultShader == null ) defaultShader = new DefaultShader();
 	}
 
 	@Override
@@ -58,9 +64,14 @@ public class ModelRenderSys extends EntitySystem {
 			ModelComp model = modelMap.get(e);
 			PhysicsComp physics = physicsMap.get(e);
 			model.modelInst.transform.set(physics.collisionObject.getWorldTransform());
+<<<<<<< HEAD
 
-			if(model.shader != null){
-				loadShaderData(model);
+			if(model.shader == null){
+				if(customShader == null){
+					model.shader = defaultShader;
+				}else{
+					model.shader = customShader;
+				}
 			}
 			
 			if (environment != null && model.shader != null) {
@@ -72,6 +83,9 @@ public class ModelRenderSys extends EntitySystem {
 			} else {
 				batch.render(model.modelInst);
 			}
+=======
+			batch.render(model.modelInst);
+>>>>>>> parent of 2bae7d9... ShaderTest added
 		}
 	}
 
@@ -80,6 +94,7 @@ public class ModelRenderSys extends EntitySystem {
 		batch.end();
 	}
 
+<<<<<<< HEAD
 	public void dispose() {
 		batch.dispose();
 	}
@@ -88,8 +103,12 @@ public class ModelRenderSys extends EntitySystem {
 		this.environment = environment;
 	}
 
-	public void setShader(Shader shader) {
-		this.shader = shader;
+	public void setDefaultShader(Shader shader) {
+		
+		this.customShader = shader;
 	}
 
 }
+=======
+}
+>>>>>>> parent of 2bae7d9... ShaderTest added
