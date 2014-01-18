@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" 
+path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/jge3d2/lib/gdx.jar" 
+sourcepath="/jge3d2/lib/src/gdx-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" 
+value="http://libgdx.badlogicgames.com/nightlies/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/jge3d2/lib/gdx-bullet.jar" 
+sourcepath="/jge3d2/lib/src/gdx-bullet-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" 
+value="http://libgdx.badlogicgames.com/nightlies/docs/api/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" 
+path="/jge3d2/lib/artemis-odb-0.5.0.jar" 
+sourcepath="/jge3d2/lib/src/artemis-odb-0.5.0-sources.jar"/>
+	<classpathentry kind="lib" 
+path="/jge3d2/lib/log4j-api-2.0-beta9.jar" 
+sourcepath="/jge3d2/lib/src/log4j-api-2.0-beta9-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" 
+value="jar:platform:/resource/thing/lib/docs/log4j-api-2.0-beta9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" 
+path="/jge3d2/lib/log4j-core-2.0-beta9.jar" 
+sourcepath="/jge3d2/lib/docs/log4j-core-2.0-beta9-javadoc.jar">
+		<attributes>
+			<attribute name="javadoc_location" 
+value="jar:platform:/resource/jge3d2/lib/docs/log4j-core-2.0-beta9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" 
+path="lib/gdx-backend-lwjgl-natives.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-natives.jar"/>
+	<classpathentry kind="src" path="/jge3d2"/>
+	<classpathentry kind="lib" path="lib/gdx-bullet-natives.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
