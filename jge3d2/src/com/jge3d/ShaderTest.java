@@ -105,7 +105,7 @@ public class ShaderTest implements ApplicationListener {
 		// Usage.Normal);
 		ModelLoader<ObjLoaderParameters> loader = new ObjLoader();
 		Model m = loader.loadModel(Gdx.files
-				.internal("resources/models/shuttle.obj"));
+				.internal("models/shuttle.obj"));
 		models.add(m);
 
 		e.addComponent(new ModelComp(m));
@@ -245,10 +245,13 @@ public class ShaderTest implements ApplicationListener {
 
 	private void shaderSetup() {
 		ShaderProgram shader = new ShaderProgram(
-				Gdx.files.internal("resources/shaders/default.vertex.shader"),
-				Gdx.files.internal("resources/shaders/default.fragment.shader"));
+				Gdx.files.internal("shaders/default.vertex.shader"),
+				Gdx.files.internal("shaders/default.fragment.shader"));
 
-		shader.isCompiled();
+		System.out.println("Did shader compile? " + Boolean.toString(shader.isCompiled()));
+		if(!shader.isCompiled()){
+			System.out.println(shader.getLog());
+		}
 	}
 
 	private void systemsSetup() {
