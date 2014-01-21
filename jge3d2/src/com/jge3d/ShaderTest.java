@@ -245,8 +245,8 @@ public class ShaderTest implements ApplicationListener {
 
 	private void shaderSetup() {
 		ShaderProgram shader = new ShaderProgram(
-				Gdx.files.internal("shaders/default.vertex.shader"),
-				Gdx.files.internal("shaders/default.fragment.shader"));
+				Gdx.files.internal("shaders/DefaultShader.vertex.shader"),
+				Gdx.files.internal("shaders/DefaultShader.fragment.shader"));
 
 		System.out.println("Did shader compile? " + Boolean.toString(shader.isCompiled()));
 		if(!shader.isCompiled()){

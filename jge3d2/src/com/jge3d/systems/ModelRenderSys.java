@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.environment.AmbientCubemap;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.jge3d.components.ModelComp;
 import com.jge3d.components.PhysicsComp;
-import com.jge3d.shaders.DefaultShader;
+import com.jge3d.shaders.Jge3d2DefaultShader;
 
 public class ModelRenderSys extends EntitySystem {
 	@Mapper
@@ -27,7 +29,7 @@ public class ModelRenderSys extends EntitySystem {
 	
 	private Shader defaultShader;
 	private Shader customShader;
-
+	private DefaultShader w;
 	@SuppressWarnings("unchecked")
 	public ModelRenderSys(PerspectiveCamera camera) {
 		super(Aspect.getAspectForAll(PhysicsComp.class, ModelComp.class));
@@ -38,7 +40,7 @@ public class ModelRenderSys extends EntitySystem {
 	protected void initialize() {
 		batch = new ModelBatch();
 		if( defaultShader == null ) {
-			defaultShader = new DefaultShader();
+			defaultShader = new Jge3d2DefaultShader();
 			defaultShader.init();
 		}
 	}
