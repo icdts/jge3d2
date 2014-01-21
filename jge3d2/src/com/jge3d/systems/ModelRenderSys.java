@@ -37,7 +37,10 @@ public class ModelRenderSys extends EntitySystem {
 	@Override
 	protected void initialize() {
 		batch = new ModelBatch();
-		if( defaultShader == null ) defaultShader = new DefaultShader();
+		if( defaultShader == null ) {
+			defaultShader = new DefaultShader();
+			defaultShader.init();
+		}
 	}
 
 	@Override

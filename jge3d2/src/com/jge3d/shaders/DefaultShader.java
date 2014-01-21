@@ -18,8 +18,8 @@ public class DefaultShader implements Shader {
 	@Override
 	public void init() {
 		program = new ShaderProgram(
-			Gdx.files.external("resources/shaders/defaultShader.vertex.shader"),
-			Gdx.files.external("resources/shaders/defaultShader.fragment.shader")
+			Gdx.files.external(Gdx.files.getLocalStoragePath() + "resources/shaders/defaultShader.vertex.shader"),
+			Gdx.files.external(Gdx.files.getLocalStoragePath() + "resources/shaders/defaultShader.fragment.shader")
 		);
 	}
 

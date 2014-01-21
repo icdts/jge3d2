@@ -252,6 +252,7 @@ public class ShaderTest implements ApplicationListener {
 		if(!shader.isCompiled()){
 			System.out.println(shader.getLog());
 		}
+		assert(shader.isCompiled());
 	}
 
 	private void systemsSetup() {
