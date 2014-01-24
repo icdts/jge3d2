@@ -1,15 +1,17 @@
-package com.jge3d.systems;
+package com.jge3d.components;
 
 import java.lang.reflect.Method;
 
-public class InputRunnable extends Thread {
+import com.artemis.Component;
+
+public class InputComp extends Component{
 	private long previousTime;
 	private Method methodToRun;
 	private Object objToUse;
 	private Double increment;
 	private volatile boolean shouldStop;
 
-	public InputRunnable(String methodName, Object objToUse, Double inc)
+	public InputComp(String methodName, Object objToUse, Double inc)
 		throws SecurityException, NoSuchMethodException {
 		methodToRun = objToUse.getClass().getMethod(methodName, inc.getClass());
 		this.objToUse = objToUse;
@@ -17,7 +19,6 @@ public class InputRunnable extends Thread {
 		shouldStop = false;
 	}
 
-	@Override
 	public void run() {
 		previousTime = System.nanoTime();
 		while (!shouldStop) {

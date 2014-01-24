@@ -14,17 +14,24 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.events.Event;
 
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.EntitySystem;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.jge3d.components.InputComp;
 import com.jge3d.utils.Log;
 
-public class InputMap implements InputProcessor{
+public class InputSys extends EntitySystem implements InputProcessor{
 	//private HashMap<String,String> key_map;
 
 	final HashMap<Integer, String> lwjgl_keyboard_enums;
 	final HashMap<String, String> enums_to_function;
 
-	public InputMap() throws Exception{
+	@SuppressWarnings("unchecked")
+	public InputSys() {
+		super(Aspect.getAspectForAll(InputComp.class));
 		//key_map = new HashMap<String,String>();
 
 		lwjgl_keyboard_enums = new HashMap<Integer,String>();
@@ -44,9 +51,10 @@ public class InputMap implements InputProcessor{
 			String event = ((Element) n).getAttribute("EVENT");
 			
 			try {
-				if(this.getClass().getMethod(n.getTextContent(),Event.class) != null){
+				if(this.getClass().getMethod(n.getTextContent()) != null){
+					System.out.println("!"+id.toUpperCase()+"#"+event.toUpperCase()+"!"+n.getTextContent());
 					enums_to_function.put(
-						String.valueOf(lwjgl_keyboard_enums.get("KEY_" + id.toUpperCase())) + "KEY_" + event.toUpperCase(),
+						lwjgl_keyboard_enums.get(id.toUpperCase()) + "#" + event.toUpperCase(),
 						n.getTextContent()
 					);
 				}
@@ -61,7 +69,7 @@ public class InputMap implements InputProcessor{
 			String event = ((Element) n).getAttribute("EVENT");
 			if(n.getTextContent() != ""){
 				try {
-					if(this.getClass().getMethod(n.getTextContent(),Event.class) != null){
+					if(this.getClass().getMethod(n.getTextContent()) != null){
 						enums_to_function.put(
 							"MOUSE_" + event,  
 							n.getTextContent()
@@ -99,7 +107,7 @@ public class InputMap implements InputProcessor{
 		return null;
 	}
 
-	public void loadFromFile(InputStream is, String extension) throws Exception {
+	public void loadFromFile(InputStream is) throws Exception {
 		Document dom;
   		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     
@@ -128,15 +136,17 @@ public class InputMap implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
+		System.out.println(keycode);
 		for(String f: enums_to_function.keySet()) {
-			if(lwjgl_keyboard_enums.get(keycode).equals(f)) {
+			System.out.println("key:"+keycode+"@file:"+f+"@"+lwjgl_keyboard_enums.get(keycode));
+			if( (lwjgl_keyboard_enums.get(keycode)+"#PRESSED").equals(f) ) {
 				//Object[] params = new Object[1];
 				//params[0] = e;
 				//try {
 				@SuppressWarnings("unused")
 				Method m = null;
 				try {
-					m = InputMap.class.getMethod(enums_to_function.get(f),Event.class);
+					m = InputSys.class.getMethod(enums_to_function.get(f),Event.class);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -197,5 +207,59 @@ public class InputMap implements InputProcessor{
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	protected void processEntities(ImmutableBag<Entity> entities) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected boolean checkProcessing() {
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public void rotateCamLeft() {
+		Log.debug("rotateLeft");
+	}
+	public void rotateCamRight() {
+		Log.debug("rotateRight");
+	}
+	public void rotateCamUp() {
+		Log.debug("rotateUp");
+	}
+	public void rotateCamDown() {
+		Log.debug("rotateDown");
+	}
+	public void stopCamLeft() {
+		Log.debug("rotateLeftStop");
+	}
+	public void stopCamRight() {
+		Log.debug("rotateRightStop");
+	}
+	public void stopCamUp() {
+		Log.debug("rotateUpStop");
+	}
+	public void stopCamDown() {
+		Log.debug("rotateDownStop");
+	}
+	public void zoomCameraIn() {
+		Log.debug("rotateIn");
+	}
+	public void zoomCameraOut() {
+		Log.debug("rotateOut");
+	}
+	public void stopCamZoomIn() {
+		Log.debug("rotateZoomInStop");
+	}
+	public void stopCamZoomOut() {
+		Log.debug("rotateZoomOutStop");
 	}
 }

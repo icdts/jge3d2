@@ -1,0 +1,24 @@
+<keymap>
+	<keyboard>
+		<key ID="LEFT" EVENT="PRESSED">rotateCamLeft</key>
+		<key ID="RIGHT" EVENT="PRESSED">rotateCamRight</key>
+		<key ID="UP" EVENT="PRESSED">rotateCamUp</key>
+		<key ID="DOWN" EVENT="PRESSED">rotateCamDown</key>
+		<key ID="LEFT" EVENT="RELEASED">stopCamLeft</key>
+		<key ID="RIGHT" EVENT="RELEASED">stopCamRight</key>
+		<key ID="UP" EVENT="RELEASED">stopCamUp</key>
+		<key ID="DOWN" EVENT="RELEASED">stopCamDown</key>
+		<key ID="PAGE_UP" EVENT="PRESSED">zoomCameraIn</key>
+		<key ID="PAGE_DOWN" EVENT="PRESSED">zoomCameraOut</key>
+		<key ID="PAGE_UP" EVENT="RELEASED">stopCamZoomIn</key>
+		<key ID="PAGE_DOWN" EVENT="RELEASED">stopCamZoomOut</key>
+	</keyboard>
+	<!--
+	<mouse>
+		<event EVENT="MOVED"></event>
+		<event EVENT="BTNDOWN">pickedEntity</event>
+		<event EVENT="DRAGGED">movePicked</event>
+		<event EVENT="BTNUP">releasePicked</event>
+	</mouse>
+	-->
+</keymap>

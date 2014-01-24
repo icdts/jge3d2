@@ -2,6 +2,7 @@ package com.jge3d;
 
 import com.jge3d.components.PhysicsComp;
 import com.jge3d.components.ModelComp;
+import com.jge3d.systems.InputSys;
 import com.jge3d.systems.PhysicsSys;
 import com.jge3d.systems.ModelRenderSys;
 import com.jge3d.systems.SpriteRenderSys;
@@ -39,6 +40,7 @@ public class GameDefault implements ApplicationListener {
 	private SpriteRenderSys spriteRenderSys;
 	private ModelRenderSys modelRenderSys;
 	private PhysicsSys bulletPhysicsSys;
+	private InputSys inputSys;
 	
 	@SuppressWarnings("unused")
 	private int frames = 0;
@@ -56,11 +58,22 @@ public class GameDefault implements ApplicationListener {
 
 		world = new World();
 		
+		//Configure input system and load keymap from file
+		inputSys = world.setSystem(new InputSys());
+		try {
+			inputSys.loadFromFile(Gdx.files.internal("inputmaps/default.xml").read());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		Gdx.input.setInputProcessor(inputSys);
+		
 		spriteRenderSys = world.setSystem(new SpriteRenderSys(spriteCamera),true);
 		modelRenderSys = world.setSystem(new ModelRenderSys(modelCamera), true);
 		bulletPhysicsSys = world.setSystem(new PhysicsSys());
-		world.initialize();
 		
+		world.initialize();
 		
 		//Start adding Models...
 		ModelBuilder mb = new ModelBuilder();
@@ -100,7 +113,7 @@ public class GameDefault implements ApplicationListener {
 	public void render() {
 		world.setDelta(Gdx.graphics.getDeltaTime());
 		bulletPhysicsSys.process();
-
+		inputSys.process();
 		
 		modelCamera.update();
 		// if(use3D){
