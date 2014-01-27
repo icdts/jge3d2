@@ -2,6 +2,7 @@ package com.jge3d.shaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
@@ -12,10 +13,9 @@ public class Jge3d2DefaultShader implements Shader {
 	Camera camera;
 	RenderContext context;
 	
-	@Override
-	public void dispose() {
-		program.dispose();
-	}
+	//Store locations of uniforms/etc to save time
+	int u_projTrans;
+	int u_worldTrans;
 
 	@Override
 	public void init() {
@@ -23,35 +23,38 @@ public class Jge3d2DefaultShader implements Shader {
 			Gdx.files.internal("shaders/DefaultShader.vertex.shader"),
 			Gdx.files.internal("shaders/DefaultShader.fragment.shader")
 		);
-	}
-
-	@Override
-	public int compareTo(Shader other) {
-		//TODO ?
-		return 0;
-	}
-
-	@Override
-	public boolean canRender(Renderable instance) {
-		// TODO Auto-generated method stub
-		return true;
+		
+		if(program.isCompiled()){
+			u_projTrans = program.getUniformLocation("u_projTrans");
+			u_worldTrans = program.getUniformLocation("u_worldTrans");
+		}else{
+			System.out.println(program.getLog());
+		}
 	}
 
 	@Override
 	public void begin(Camera camera, RenderContext context) {
-		// TODO Auto-generated method stub
-		//context.
+		//These won't change until end() is called
 		this.camera = camera;
 		this.context = context;
+		
 		program.begin();
+
+		program.setUniformMatrix(u_projTrans, camera.combined);
+		
+		context.setDepthTest(GL20.GL_LEQUAL);
+        context.setCullFace(GL20.GL_BACK);
 	}
 
 	@Override
 	public void render(Renderable renderable) {
-		// TODO Auto-generated method stub
+		program.setUniformMatrix(u_worldTrans, renderable.worldTransform);
+		
 		renderable.mesh.render(
 			program, 
-			renderable.primitiveType
+			renderable.primitiveType,
+			renderable.meshPartOffset,
+			renderable.meshPartSize
 		);
 	}
 
@@ -61,4 +64,20 @@ public class Jge3d2DefaultShader implements Shader {
 		program.end();
 	}
 
+	@Override
+	public void dispose() {
+		program.dispose();
+	}
+	
+	@Override
+	public int compareTo(Shader other) {
+		//Used by model batch to determine which shader should be returned first
+		return 0; //Just always say its equal
+	}
+	
+	@Override
+	public boolean canRender(Renderable instance) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }

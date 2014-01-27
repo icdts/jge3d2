@@ -20,8 +20,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader.ObjLoaderParameters;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -57,6 +57,8 @@ public class ShaderTest implements ApplicationListener {
 	// For keeping track of what needs to be disposed
 	ArrayList<Model> models;
 
+	DefaultShaderProvider dsp;
+	
 	private void cameraSetup() {
 		modelCamera = new PerspectiveCamera(45, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
@@ -80,7 +82,6 @@ public class ShaderTest implements ApplicationListener {
         world.initialize();
 
         entitySetup();
-        shaderSetup();
 	}
 
 	@Override
@@ -241,18 +242,6 @@ public class ShaderTest implements ApplicationListener {
 	public void resume() {
 		// TODO Auto-generated method stub
 
-	}
-
-	private void shaderSetup() {
-		ShaderProgram shader = new ShaderProgram(
-				Gdx.files.internal("shaders/DefaultShader.vertex.shader"),
-				Gdx.files.internal("shaders/DefaultShader.fragment.shader"));
-
-		System.out.println("Did shader compile? " + Boolean.toString(shader.isCompiled()));
-		if(!shader.isCompiled()){
-			System.out.println(shader.getLog());
-		}
-		assert(shader.isCompiled());
 	}
 
 	private void systemsSetup() {
