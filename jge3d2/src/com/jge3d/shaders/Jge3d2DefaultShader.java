@@ -20,13 +20,20 @@ public class Jge3d2DefaultShader implements Shader {
 	@Override
 	public void init() {
 		program = new ShaderProgram(
+			Gdx.files.external("workspace/jge3d2/jge3d2/resources/shaders/DefaultShader.vertex.shader").readString(),
+		    Gdx.files.external("workspace/jge3d2/jge3d2/resources/shaders/DefaultShader.fragment.shader").readString()
+		/*
 			Gdx.files.internal("shaders/DefaultShader.vertex.shader"),
 			Gdx.files.internal("shaders/DefaultShader.fragment.shader")
+		*/
 		);
 		
 		if(program.isCompiled()){
-			u_projTrans = program.getUniformLocation("u_projTrans");
+			u_projTrans = program.getUniformLocation("u_projViewTrans");
 			u_worldTrans = program.getUniformLocation("u_worldTrans");
+			if(u_projTrans == -1 || u_worldTrans == -1){
+				System.out.println("Missing uniform");
+			}
 		}else{
 			System.out.println(program.getLog());
 		}

@@ -67,6 +67,7 @@ public class ModelRenderSys extends EntitySystem {
 			ModelComp model = modelMap.get(e);
 			PhysicsComp physics = physicsMap.get(e);
 			
+			//TODO: Robert: Change this to be a helper method.  Don't use the physics component this way.
 			model.modelInst.transform.set(physics.collisionObject.getWorldTransform());
 
 			if(model.shader == null){
