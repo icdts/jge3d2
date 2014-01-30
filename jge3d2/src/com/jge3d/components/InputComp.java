@@ -23,7 +23,6 @@ public class InputComp extends Component{
 		previousTime = System.nanoTime();
 		while (!shouldStop) {
 			double inc = (System.nanoTime() - previousTime) * -increment;
-			// System.out.println(inc);
 			try {
 				methodToRun.invoke(objToUse, inc);
 			} catch (Exception e) {

@@ -2,7 +2,6 @@ package com.jge3d.systems;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,11 +11,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.events.Event;
 
 import com.artemis.Aspect;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.EntitySystem;
+import com.artemis.annotations.Mapper;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -24,8 +24,9 @@ import com.jge3d.components.InputComp;
 import com.jge3d.utils.Log;
 
 public class InputSys extends EntitySystem implements InputProcessor{
-	//private HashMap<String,String> key_map;
-
+	@Mapper
+	ComponentMapper<InputComp> inputMap;
+	
 	final HashMap<Integer, String> lwjgl_keyboard_enums;
 	final HashMap<String, String> enums_to_function;
 
@@ -140,9 +141,11 @@ public class InputSys extends EntitySystem implements InputProcessor{
 		for(String f: enums_to_function.keySet()) {
 			System.out.println("key:"+keycode+"@file:"+f+"@"+lwjgl_keyboard_enums.get(keycode));
 			if( (lwjgl_keyboard_enums.get(keycode)+"#PRESSED").equals(f) ) {
+				
 				//Object[] params = new Object[1];
 				//params[0] = e;
 				//try {
+				/*
 				@SuppressWarnings("unused")
 				Method m = null;
 				try {
@@ -157,10 +160,11 @@ public class InputSys extends EntitySystem implements InputProcessor{
 				Log.debug("Caught: " + f + " || Running: " + enums_to_function.get(f));
 				
 				try{
-					//m.invoke(this,params);
+					m.invoke(this,params);
 				}catch(Exception ex){
 					throw ex;
-				}				
+				}
+				*/
 			}				
 		}
 		
@@ -208,13 +212,20 @@ public class InputSys extends EntitySystem implements InputProcessor{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	
 	@Override
 	protected void processEntities(ImmutableBag<Entity> entities) {
-		// TODO Auto-generated method stub
-		
+		for (int i = 0; i < entities.size(); i++) {
+			process(entities.get(i));
+		}
 	}
-
+	
+	protected void process(Entity e) {
+		if (inputMap.has(e)) {
+			
+		}
+	}
+	
 	@Override
 	protected boolean checkProcessing() {
 		return false;
@@ -262,4 +273,5 @@ public class InputSys extends EntitySystem implements InputProcessor{
 	public void stopCamZoomOut() {
 		Log.debug("rotateZoomOutStop");
 	}
+
 }
