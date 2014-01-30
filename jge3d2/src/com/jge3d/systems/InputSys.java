@@ -40,9 +40,12 @@ public class InputSys extends EntitySystem implements InputProcessor{
 		
 		for(Field f : Input.Keys.class.getFields()){
 			try {
-				lwjgl_keyboard_enums.put((Integer)f.get(null),f.getName());
+				lwjgl_keyboard_enums.put(f.getInt(null),f.getName());
 			} catch (IllegalArgumentException e) {
-			} catch (IllegalAccessException e) {}
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
