@@ -231,7 +231,8 @@ public class InputSys extends EntitySystem implements InputProcessor{
 	
 	protected void process(Entity e) {
 		if (inputMap.has(e)) {
-			e.getComponent(InputComp.class);
+			//InputComp input = e.getComponent(InputComp.class);
+			//input.
 		}
 	}
 	
