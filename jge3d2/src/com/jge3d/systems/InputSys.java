@@ -140,7 +140,6 @@ public class InputSys extends EntitySystem implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
-		System.out.println(keycode);
 		for(String f: enums_to_function.keySet()) {
 			System.out.println("key:"+keycode+"@file:"+f+"@"+lwjgl_keyboard_enums.get(keycode));
 			if( (lwjgl_keyboard_enums.get(keycode)+"#PRESSED").equals(f) ) {
