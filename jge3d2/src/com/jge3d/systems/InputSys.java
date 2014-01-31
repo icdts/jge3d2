@@ -4,6 +4,8 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,14 +29,15 @@ public class InputSys extends EntitySystem implements InputProcessor{
 	@Mapper
 	ComponentMapper<InputComp> inputMap;
 	
-	final HashMap<Integer, String> lwjgl_keyboard_enums;
-	final HashMap<String, String> enums_to_function;
-
+	final private HashMap<Integer, String> lwjgl_keyboard_enums;
+	final private HashMap<String, String> enums_to_function;
+	private Queue<String> event_queue;
+	
 	@SuppressWarnings("unchecked")
 	public InputSys() {
 		super(Aspect.getAspectForAll(InputComp.class));
-		//key_map = new HashMap<String,String>();
-
+		
+		event_queue = new LinkedBlockingQueue<String>();
 		lwjgl_keyboard_enums = new HashMap<Integer,String>();
 		enums_to_function = new HashMap<String,String>();
 		
@@ -42,6 +45,7 @@ public class InputSys extends EntitySystem implements InputProcessor{
 			try {
 				lwjgl_keyboard_enums.put(f.getInt(null),f.getName());
 			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,9 +60,8 @@ public class InputSys extends EntitySystem implements InputProcessor{
 			
 			try {
 				if(this.getClass().getMethod(n.getTextContent()) != null){
-					System.out.println("!"+id.toUpperCase()+"#"+event.toUpperCase()+"!"+n.getTextContent());
 					enums_to_function.put(
-						lwjgl_keyboard_enums.get(id.toUpperCase()) + "#" + event.toUpperCase(),
+						id.toUpperCase() + "#" + event.toUpperCase(),
 						n.getTextContent()
 					);
 				}
@@ -141,8 +144,12 @@ public class InputSys extends EntitySystem implements InputProcessor{
 	@Override
 	public boolean keyDown(int keycode) {
 		for(String f: enums_to_function.keySet()) {
-			System.out.println("key:"+keycode+"@file:"+f+"@"+lwjgl_keyboard_enums.get(keycode));
 			if( (lwjgl_keyboard_enums.get(keycode)+"#PRESSED").equals(f) ) {
+				event_queue.add(f);
+				
+				Log.debug("Received:"+ keycode + " >> "+
+						lwjgl_keyboard_enums.get(keycode)+
+						" Running:"+enums_to_function.get(f));
 				
 				//Object[] params = new Object[1];
 				//params[0] = e;
@@ -224,7 +231,7 @@ public class InputSys extends EntitySystem implements InputProcessor{
 	
 	protected void process(Entity e) {
 		if (inputMap.has(e)) {
-			
+			e.getComponent(InputComp.class);
 		}
 	}
 	
